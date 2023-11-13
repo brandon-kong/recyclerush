@@ -253,7 +253,8 @@ export default function CaptureRecyclablePage () {
                                 ) : (
                                     <>
                                         <Webcam ref={webcamRef} className={'rounded-md pointer-events-none'} audio={false} 
-                                        
+                                        width={640}
+                                        height={480}
                                         />
                                         <canvas ref={canvasRef} 
                                         className={'absolute top-0 left-0 rounded-md'}
