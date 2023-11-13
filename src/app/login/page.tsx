@@ -1,12 +1,47 @@
+'use client';
+
 import { Button } from "@/components/ui/button"
 import { TypographyH2, TypographyP } from "@/components/typography"
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
 
+import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from 'next/navigation';
+
 export default function LoginPage () {
+
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
+    
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const attemptEmailLogin = async (e: any) => {
+        e.preventDefault();
+
+        setLoading(true);
+
+        let callback = 'http://localhost:3000/';
+        const verified = await signIn('email-password', {
+            email,
+            password,
+
+            callbackUrl: callback,
+        });
+
+        if (!verified?.error) {
+            router.push('/');
+        } else {
+            // TODO: handle error
+        }
+
+        setLoading(false);
+    };
+
     return (
         <main className="flex min-h-screen flex-col items-center justify-center">
-            <div className={'flex flex-col items-center w-full max-w-sm gap-8'}>
+            <form onSubmit={attemptEmailLogin} className={'flex flex-col items-center w-full max-w-sm gap-8'}>
                 <div className={'flex flex-col items-center justify-center'}>
                     <TypographyH2>
                         Recycle Rush 
@@ -19,9 +54,17 @@ export default function LoginPage () {
                 <div
                 className={'flex flex-col gap-4 w-full'}
                 >
-                    <Input placeholder="Email" />
-                    <Input placeholder="Password" type={'password'} />
-                    <Button>
+                    <Input placeholder="Email"  
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    />
+                    <Input placeholder="Password" type={'password'}
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    />
+                    <Button
+                    type={'submit'}
+                    >
                         Login
                     </Button>
                     <Link href="/register"
@@ -30,7 +73,7 @@ export default function LoginPage () {
                         Register an account
                     </Link>
                 </div>
-            </div>
+            </form>
             
             
         </main>

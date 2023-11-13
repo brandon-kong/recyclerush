@@ -1,12 +1,64 @@
+'use client';
+
 import { Button } from "@/components/ui/button"
 import { TypographyH2, TypographyP } from "@/components/typography"
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
 
+import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from 'next/navigation';
+import { registerUserWithEmail } from "@/lib/auth/util";
+
 export default function RegisterPage () {
+
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
+    
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastname] = useState('');
+
+    const attemptEmailRegister = async (e: any) => {
+        e.preventDefault();
+        setLoading(true);
+
+        const registered = await registerUserWithEmail({
+            email,
+            firstName,
+            lastName,
+            password,
+        });
+
+        if (registered.status_code === 201) {
+            // sign in
+
+            let callback = 'http://localhost:3000/';
+
+            const signedIn = await signIn('email-password', {
+                email,
+                password,
+
+                callbackUrl: callback,
+            });
+
+            if (!signedIn?.error) {
+                setLoading(false);
+                router.push('/');
+            } else {
+                // TODO: handle error
+            }
+        } else {
+            // TODO: handle error
+        }
+
+        setLoading(false);
+    };
+
     return (
         <main className="flex min-h-screen flex-col items-center justify-center">
-            <div className={'flex flex-col items-center w-full max-w-sm gap-8'}>
+            <form onSubmit={attemptEmailRegister} className={'flex flex-col items-center w-full max-w-sm gap-8'}>
                 <div className={'flex flex-col items-center justify-center'}>
                     <TypographyH2>
                         Recycle Rush 
@@ -20,12 +72,26 @@ export default function RegisterPage () {
                 className={'flex flex-col gap-4 w-full'}
                 >
                     <div className={'flex gap-4'}>
-                        <Input placeholder="First name" />
-                        <Input placeholder="Last name" />
+                        <Input placeholder="First name" 
+                        value={firstName}
+                        onChange={e => setFirstName(e.target.value)}
+                        />
+                        <Input placeholder="Last name"
+                        value={lastName}
+                        onChange={e => setLastname(e.target.value)}
+                        />
                     </div>
-                    <Input placeholder="Email" />
-                    <Input placeholder="Password" type={'password'} />
-                    <Button>
+                    <Input placeholder="Email" 
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    />
+                    <Input placeholder="Password" type={'password'}
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    />
+                    <Button
+                    type={'submit'}
+                    >
                         Register
                     </Button>
                     <Link href="/login"
@@ -34,7 +100,7 @@ export default function RegisterPage () {
                         Already have an account? Login
                     </Link>
                 </div>
-            </div>
+            </form>
             
             
         </main>

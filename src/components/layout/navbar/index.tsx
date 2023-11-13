@@ -32,10 +32,13 @@ import {
     MenubarTrigger,
 } from '@/components/ui/menubar';
 import { BlackSpinner } from '@/components/spinner';
-import { TypographyH2, TypographyH3, TypographyH4 } from '@/components/typography';
+import { TypographyH2, TypographyH3, TypographyH4, TypographyP } from '@/components/typography';
+import { GetUsersName, GetUsersPoints } from '@/lib/auth/util';
 
 export default function MainNavbar() {
     const { data: session, status } = useSession();
+    const [name, setName] = useState<string>('');
+    const [points, setPoints] = useState<number>(0);
 
     const [scrollPosition, setScrollPosition] = useState<number>(0);
 
@@ -45,6 +48,19 @@ export default function MainNavbar() {
 
     useEffect(() => {
         document.addEventListener('scroll', handleScroll);
+
+        if (status === 'authenticated') {
+            GetUsersName().then((data) => {
+                const detail = data.detail as any;
+                setName(`${detail.first_name} ${detail.last_name}`);
+            });
+
+            GetUsersPoints().then((data) => {
+                const detail = data.detail as any;
+                setPoints(detail.points);
+            });
+
+        }
     });
     return (
         <div
@@ -69,18 +85,12 @@ export default function MainNavbar() {
                             </NavigationMenuItem>
 
                             <NavigationMenuItem>
-                                <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/track">
+                                <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/leaderboard">
                                     Leaderboard
                                 </NavigationMenuLink>
                             </NavigationMenuItem>
 
-                            <NavigationMenuItem className={'hidden xl:block'}>
-                                <NavigationMenuLink className={navigationMenuTriggerStyle()} href="#">
-                                    About
-                                </NavigationMenuLink>
-                            </NavigationMenuItem>
-
-                            <NavigationMenuItem className={'hidden xl:block'}>
+                            <NavigationMenuItem className={''}>
                                 <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), 'bg-black text-white hover:text-white hover:bg-black/90 active:bg-black/80 active:text-white focus:bg-black focus:text-white')} href="/capture">
                                     Capture Recyclable
                                 </NavigationMenuLink>
@@ -96,6 +106,42 @@ export default function MainNavbar() {
                     <BlackSpinner />
                 ) : status === 'authenticated' ? (
                     <>
+                    {
+                        points ? (
+                            <div
+                            className={'flex items-center bg-green-100 p-1 rounded-md pr-3'}
+                            >   
+                                <div
+                                className={'overflow-hidden h-8 w-8'}
+                                >
+                                    <Image
+                                    src={'/currency.svg'}
+                                    alt="Workflow"
+                                    width={70}
+                                    height={70}
+                                    className={'object-cover scale-125 select-none'}
+                                    />
+                                </div>
+                                
+                                <TypographyP
+                                className='text-black font-bold text-md'
+                                >
+                                    {points}
+                                </TypographyP>
+                            </div>
+                        )
+                        : (
+                            <BlackSpinner />
+                        )
+                    } 
+
+                    {
+                        name ? (
+                            <TypographyP className={'cursor-pointer'}>{name}</TypographyP>
+                        ) : (
+                            <BlackSpinner />
+                        )
+                    }
 
                         <Menubar className="border-none bg-transparent">
                             <MenubarMenu>
@@ -123,6 +169,8 @@ export default function MainNavbar() {
                                 </MenubarContent>
                             </MenubarMenu>
                         </Menubar>
+
+                        
                     </>
                 ) : (
                     <div className="flex-shrink-0 flex gap-4">

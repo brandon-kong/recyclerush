@@ -13,6 +13,7 @@ import { capitalizeFirstLetter } from '@/lib/string';
 import { RecyclableItemsFromCoco, howToRecycleItem } from '@/lib/detection';
 
 import Confetti from 'react-confetti';
+import { AddUserPoints } from '@/lib/auth/util';
 
 export default function CaptureRecyclablePage () {
     const [objectDetector, setObjectDetectors] = useState<ObjectDetection | null>(null);
@@ -126,10 +127,13 @@ export default function CaptureRecyclablePage () {
 
             if (res.toLowerCase().includes('recycle')) {
                 setRewardedPoints(10);
+                AddUserPoints(10);
             } else if (res.toLowerCase().includes('reuse')) {
                 setRewardedPoints(5);
+                AddUserPoints(5);
             } else if (res.toLowerCase().includes('compost')) {
                 setRewardedPoints(5);
+                AddUserPoints(5);
             } else {
                 setRewardedPoints(0);
             }
