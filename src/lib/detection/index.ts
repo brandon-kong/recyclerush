@@ -1,4 +1,6 @@
-export RecyclableItemsFromCoco = [
+import OpenAI from 'openai'
+
+export const RecyclableItemsFromCoco = [
     'bottle',
     'cup',
     'fork',
@@ -54,5 +56,81 @@ export RecyclableItemsFromCoco = [
     'baseball bat',
     'baseball glove',
     'skateboard',
-    
+
+    'surfboard',
+    'tennis racket',
+
+    'wine glass',
 ]
+
+export const HowToRecycleItem = {
+    ['bottle']: 'Recycle plastic bottles if your local recycling program accepts them. If not, you can take them to a local recycling center.',
+    ['cup']: 'Recycle plastic cups if your local recycling program accepts them. If not, you can take them to a local recycling center.',
+    ['fork']: 'Recycle plastic forks if your local recycling program accepts them. If not, you can take them to a local recycling center.',
+    ['knife']: 'Recycle plastic knives if your local recycling program accepts them. If not, you can take them to a local recycling center.',
+    ['spoon']: 'Recycle plastic spoons if your local recycling program accepts them. If not, you can take them to a local recycling center.',
+    ['bowl']: 'Recycle plastic bowls if your local recycling program accepts them. If not, you can take them to a local recycling center.',
+    ['banana']: 'Compost banana peels if you have a compost bin. If not, you can throw them in the trash.',
+    ['apple']: 'Compost apple cores if you have a compost bin. If not, you can throw them in the trash.',
+    ['sandwich']: 'Compost sandwich crusts if you have a compost bin. If not, you can throw them in the trash.',
+    ['orange']: 'Compost orange peels if you have a compost bin. If not, you can throw them in the trash.',
+    ['broccoli']: 'Compost broccoli stems if you have a compost bin. If not, you can throw them in the trash.',
+    ['carrot']: 'Compost carrot peels if you have a compost bin. If not, you can throw them in the trash.',
+    ['hot dog']: 'Compost hot dog buns if you have a compost bin. If not, you can throw them in the trash.',
+    ['pizza']: 'Compost pizza crusts if you have a compost bin. If not, you can throw them in the trash.',
+    ['donut']: 'Compost donut holes if you have a compost bin. If not, you can throw them in the trash.',
+    ['cake']: 'Compost cake if you have a compost bin. If not, you can throw it in the trash.',
+    ['chair']: 'Donate chairs to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['couch']: 'Donate couches to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['potted plant']: 'Compost potted plants if you have a compost bin. If not, you can throw them in the trash.',
+
+    ['bed']: 'Donate beds to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['dining table']: 'Donate dining tables to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['toilet']: 'Donate toilets to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['tv']: 'Donate TVs to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['laptop']: 'Donate laptops to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['mouse']: 'Donate mice to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['remote']: 'Donate remotes to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['keyboard']: 'Donate keyboards to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['cell phone']: 'Donate cell phones to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['microwave']: 'Donate microwaves to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['oven']: 'Donate ovens to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['toaster']: 'Donate toasters to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['sink']: 'Donate sinks to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['refrigerator']: 'Donate refrigerators to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['book']: 'Donate books to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['clock']: 'Donate clocks to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+
+    ['vase']: 'Donate vases to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['scissors']: 'Donate scissors to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['teddy bear']: 'Donate teddy bears to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['hair drier']: 'Donate hair driers to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['toothbrush']: 'Donate toothbrushes to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+
+    ['backpack']: 'Donate backpacks to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['umbrella']: 'Donate umbrellas to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['handbag']: 'Donate handbags to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['tie']: 'Donate ties to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['suitcase']: 'Donate suitcases to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['frisbee']: 'Donate frisbees to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['skis']: 'Donate skis to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+
+    ['snowboard']: 'Donate snowboards to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['sports ball']: 'Donate sports balls to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['kite']: 'Donate kites to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+
+    ['baseball bat']: 'Donate baseball bats to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['baseball glove']: 'Donate baseball gloves to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['skateboard']: 'Donate skateboards to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+
+    ['surfboard']: 'Donate surfboards to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+    ['tennis racket']: 'Donate tennis rackets to a local charity if they are in good condition. If not, you can take them to a local recycling center.',
+
+    ['wine glass']: 'Recycle wine glasses if your local recycling program accepts them. If not, you can take them to a local recycling center.',
+}
+
+type RecyclableItem = keyof typeof HowToRecycleItem
+
+export const howToRecycleItem = (item: string) => {
+    return HowToRecycleItem[item.toLowerCase() as RecyclableItem]
+}

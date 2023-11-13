@@ -10,6 +10,9 @@ import Webcam from "react-webcam"
 import { ObjectDetection, load as cocoModelLoad } from "@tensorflow-models/coco-ssd"
 import { BlackSpinner } from '@/components/spinner';
 import { capitalizeFirstLetter } from '@/lib/string';
+import { RecyclableItemsFromCoco, howToRecycleItem } from '@/lib/detection';
+
+import Confetti from 'react-confetti';
 
 export default function CaptureRecyclablePage () {
     const [objectDetector, setObjectDetectors] = useState<ObjectDetection | null>(null);
@@ -21,13 +24,24 @@ export default function CaptureRecyclablePage () {
     const [detectedObjects, setDetectedObjects] = useState<any[]>([]); // [ { bbox: [x, y, width, height], class: string, score: number } ]
     const [capturedImage, setCapturedImage] = useState<string | null>(null);
 
+    const [howToRecycleItemResponse, setHowToRecycleItemResponse] = useState<string>('');
+
+    const [rewardedPoints, setRewardedPoints] = useState<number>(0);
+
     const [recyclableItem, setRecyclableItem] = useState<string>('');
     const [description, setDescription] = useState<string>('');
+
+    const [windowWidth, setWindowWidth] = useState<number>(0);
+    const [windowHeight, setWindowHeight] = useState<number>(0);
 
     const loadOCRModel = async () => {
         const model = await cocoModelLoad();
         setObjectDetectors(model);
-        setIsLoading(false);
+        
+        if (!isSubmitting) {
+            setIsLoading(false);
+        
+        }
     };
 
     const detect = async () => {
@@ -50,7 +64,7 @@ export default function CaptureRecyclablePage () {
                         // Filter out detections with low confidence and persons
 
                         detections = detections.filter((detection) => {
-                            return detection.score > 0.5 && detection.class !== 'person';
+                            return detection.score > 0.5 && RecyclableItemsFromCoco.includes(detection.class);
                         });
 
                         // Decide whether to enable the submit button
@@ -96,11 +110,48 @@ export default function CaptureRecyclablePage () {
             });
         }
     }
+
+    function getHowToRecycle(recyclableItem: string) {
+        setIsLoading(true);
+
+        const res = howToRecycleItem(recyclableItem);
+        
+        if (res) {
+            setHowToRecycleItemResponse(res);
+
+            // Set the description
+            setDescription(res);
+
+            // Set the rewarded points
+
+            if (res.toLowerCase().includes('recycle')) {
+                setRewardedPoints(10);
+            } else if (res.toLowerCase().includes('reuse')) {
+                setRewardedPoints(5);
+            } else if (res.toLowerCase().includes('compost')) {
+                setRewardedPoints(5);
+            } else {
+                setRewardedPoints(0);
+            }
+        } else {
+            setHowToRecycleItemResponse('This item might not be recyclable.');
+        }
+        setIsLoading(false);
+        
+    }
   
     useEffect(() => {
         loadOCRModel();
         
         let interval: NodeJS.Timeout | null = null;
+
+        window.addEventListener('resize', () => {
+            setWindowWidth(window.innerWidth);
+            setWindowHeight(window.innerHeight);
+        });
+
+        setWindowWidth(window.innerWidth);
+        setWindowHeight(window.innerHeight);
 
         if (objectDetector) {
             interval = setInterval(() => {
@@ -121,6 +172,12 @@ export default function CaptureRecyclablePage () {
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-center">
+            <Confetti 
+            width={windowWidth}
+            height={windowHeight}
+            numberOfPieces={rewardedPoints > 0 ? 80 : 0}
+            recycle={false}
+            />
             <div className={'flex flex-col items-center w-full max-w-md gap-8'}>
                 <div className={'flex flex-col items-center justify-center'}>
                     <TypographyP>
@@ -130,8 +187,43 @@ export default function CaptureRecyclablePage () {
                     </TypographyP>
                     {
                         isSubmitting ? (
-                            <div>
-                                <BlackSpinner />
+                            <div className={'flex flex-col gap-4 items-center w-full mt-4 border-dashed border p-4 backdrop-blur-lg rounded-md border-green-500'}>
+                                {
+                                    isLoading ? (
+                                        <div className={'flex flex-col gap-2 items-center w-full'}>
+                                            <BlackSpinner />
+                                            <TypographyP className={'text-sm'}>
+                                                Submitting...
+                                            </TypographyP>
+                                        </div>
+                                    ) : (
+                                        <div>
+                                            {
+                                                howToRecycleItemResponse ? (
+                                                    <TypographyP className={''}>
+                                                        {howToRecycleItemResponse}
+                                                    </TypographyP>
+                                                ) : (
+                                                    <TypographyP className={'text-center'} >
+                                                        We couldn't find any information about this item.
+                                                    </TypographyP>
+                                                )
+                                            }
+
+                                            {
+                                                rewardedPoints > 0 ? (
+                                                    <TypographyP className={'text-center mt-4 bg-green-300 py-2 rounded-md'}  >
+                                                        You were rewarded {rewardedPoints} points!
+                                                    </TypographyP>
+                                                ) : (
+                                                    <>
+                                                    </>
+                                                )
+                                            }
+                                        </div>
+                                    )
+                                }
+                               
                             </div>
                         ) : (
                             <div className={'flex flex-col gap-4 w-full mt-4 border-dashed border p-4 backdrop-blur-lg rounded-md border-green-500'}>
@@ -172,6 +264,7 @@ export default function CaptureRecyclablePage () {
                         onClick={() => {
                             //detect();
                             setIsSubmitting(true);
+                            getHowToRecycle(recyclableItem);
                         
                         }}
                         >
