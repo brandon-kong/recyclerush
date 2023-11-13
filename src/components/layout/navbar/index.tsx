@@ -107,7 +107,7 @@ export default function MainNavbar() {
                 ) : status === 'authenticated' ? (
                     <>
                     {
-                        points ? (
+                        (points != null) ? (
                             <div
                             className={'flex items-center bg-green-100 p-1 rounded-md pr-3'}
                             >   
