@@ -33,7 +33,7 @@ export default function RootLayout({
           alt="Background"
           layout="fill"
           objectFit="cover"
-          className={'-z-10 absolute pointer-events-none select-none top-0 left-0 opacity-30'}
+          className={'-z-10 absolute pointer-events-none select-none top-0 left-0 opacity-40'}
           />
           {children}
         </Providers>

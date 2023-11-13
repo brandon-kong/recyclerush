@@ -242,5 +242,13 @@ export async function AddUserPoints(points: number) {
 }
 
 export async function GetRankedUsers() {
-    return AuthenticatedRequest('/users/', 'GET', null);
+    try {
+        const { data } = await api.get(`/users/`);
+
+        const response: Success | Error = data;
+        return response.detail;
+    } catch (error: any) {
+        const response: Error = error.response.data;
+        return response;
+    }
 }

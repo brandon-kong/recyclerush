@@ -13,15 +13,21 @@ export default function LeaderboardView ()  {
 
     const { data: session, status } = useSession();
 
+    const [loaded, setLoaded] = useState<boolean>(false);
+
     const [users, setUsers] = useState<{first_name: string, last_name: string, points: number, recycled_items: number}[]>([]);
 
     useEffect(() => {
-        GetRankedUsers().then((data) => {
-            const b = data as any;
-            setUsers(b);
-        });
+        if (!loaded) {
+            GetRankedUsers().then((data) => {
+                const b = data as any;
+                setUsers(b);
+                setLoaded(true);
+            });
+        }
+        
     }
-    , [status]);
+    , [status, loaded]);
 
     return (
         <main className="flex min-h-screen w-full flex-col items-center justify-center p-24">
@@ -44,7 +50,7 @@ export default function LeaderboardView ()  {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {users.map((user, index) => (
+                        {users.length > 0 && users.map((user, index) => (
                             <TableRow key={index}
                             className={index === 0 ? 'bg-green-100' :  index === 1 ? 'bg-yellow-100' : index === 2 ? 'bg-red-100' : ''}
                             >
