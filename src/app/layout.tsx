@@ -1,8 +1,13 @@
+import MainNavbar from '@/components/layout/navbar'
 import './globals.css'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Open_Sans } from 'next/font/google'
+
+import Image from 'next/image'
+import Providers from '@/lib/providers'
 
 const inter = Inter({ subsets: ['latin'] })
+const openSans = Open_Sans({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -16,7 +21,24 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <head>
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"> </script>
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"> </script>
+      </head>
+      <body className={openSans.className}>
+        <Providers>
+          <MainNavbar />
+          <Image
+          src="/background.jpg"
+          alt="Background"
+          layout="fill"
+          objectFit="cover"
+          className={'-z-10 absolute pointer-events-none select-none top-0 left-0 opacity-30'}
+          />
+          {children}
+        </Providers>
+       
+      </body>
     </html>
   )
 }
